@@ -7,10 +7,13 @@ WITH RECURSIVE date_series(date) AS (
 )
 SELECT
     date AS date_day,
-    CAST(strftime('%Y%m%d', date) AS INTEGER) AS date_key,
-    strftime('%Y', date) AS year,
-    strftime('%m', date) AS month,
-    strftime('%d', date) AS day,
-    strftime('%W', date) AS week_of_year,
-    CASE WHEN strftime('%w', date) IN ('0', '6') THEN 1 ELSE 0 END AS is_weekend
+    CAST(strftime('%Y%m%d', date) AS INT) AS date_key,
+    CAST(strftime('%Y', date) AS INT) AS year,
+    CAST('Q' || ((CAST(strftime('%m', date) AS INT) - 1) / 3 + 1) AS TEXT) AS quarter,
+    CAST(strftime('%m', date) AS INT) AS month,
+    CAST(strftime('%d', date) AS INT) AS day,
+    CAST(strftime('%W', date) AS INT) AS week_of_year,
+    CASE
+        WHEN strftime('%w', date) IN ('0', '6') THEN CAST(1 AS BOOLEAN) ELSE CAST(0 AS BOOLEAN)
+    END AS is_weekend
 FROM date_series

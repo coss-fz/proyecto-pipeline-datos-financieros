@@ -41,20 +41,36 @@ def ejecutar_extraccion():
 
 
 def ejecutar_transformacion():
-    """Ejecución de la etapa de eztracción con dbt"""
+    """Ejecución de la etapa de extracción con dbt"""
+    def ejecutar_comando_dbt(comando):
+        """Ejecuta un comando de dbt y valida su resultado"""
+        logger.info("Ejecutando: %s", ' '.join(comando))
+        result = subprocess.run(
+            comando,
+            cwd="dbt_env",
+            capture_output=False,
+            check=False
+        )
+        if result.returncode != 0:
+            logger.error("Falló el comando: %s", ' '.join(comando))
+            return False
+        return True
+
     logger.info("=" * 60)
     logger.info("PASO 2: TRANSFORMACIÓN CON DBT")
     logger.info("=" * 60)
-    result = subprocess.run(
+    comandos = [
+        ["dbt", "clean"],
+        ["dbt", "debug"],
+        ["dbt", "deps"],
         ["dbt", "build"],
-        cwd="dbt_env",
-        capture_output=False,
-        check=False
-    )
-    if result.returncode != 0:
-        logger.error("Falló la ejecución de dbt, revisa los logs de dbt.")
-    else:
-        logger.info("Ejecución de dbt completada exitosamente.")
+    ]
+    for comando in comandos:
+        ok = ejecutar_comando_dbt(comando)
+        if not ok:
+            logger.error("Se detuvo el flujo de dbt por error previo.")
+            return
+    logger.info("Ejecución completa de dbt finalizada exitosamente.")
 
 
 # def ejecutar_analisis_financiero():
