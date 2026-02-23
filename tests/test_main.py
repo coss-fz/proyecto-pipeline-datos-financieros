@@ -66,28 +66,28 @@ class TestEjecutarTransformacion:
 class TestMain:
     """Clase para definir todos los tests de la función 'main"""
 
+    @patch("main.ejecutar_analisis_financiero")
     @patch("main.ejecutar_transformacion")
     @patch("main.ejecutar_extraccion")
-    # @patch("main.ejecutar_analisis_financiero")
-    def test_step_all_ejecuta_ambas_etapas(self, mock_ext, mock_trans): # mock_af
+    def test_step_all_ejecuta_todas_etapas(self, mock_ext, mock_trans, mock_af):
         """--step all debe llamar a extracción y luego a transformación."""
         with patch.object(sys, "argv", ["main.py", "--step", "all"]):
             main()
         mock_ext.assert_called_once()
         mock_trans.assert_called_once()
-        # mock_af.assert_called_once()
+        mock_af.assert_called_once()
 
 
+    @patch("main.ejecutar_analisis_financiero")
     @patch("main.ejecutar_transformacion")
     @patch("main.ejecutar_extraccion")
-    # @patch("main.ejecutar_analisis_financiero")
-    def test_step_especifico(self, mock_ext, mock_trans): # mock_af
+    def test_step_especifico(self, mock_ext, mock_trans, mock_af):
         """--step extract no debe llamar a transformación ni a analisis"""
         with patch.object(sys, "argv", ["main.py", "--step", "extract"]):
             main()
         mock_ext.assert_called_once()
         mock_trans.assert_not_called()
-        # mock_af.assert_not_called()
+        mock_af.assert_not_called()
 
 
     @patch("main.ejecutar_transformacion", side_effect=RuntimeError("fallo inesperado"))

@@ -11,7 +11,7 @@ import subprocess
 from dotenv import load_dotenv
 
 from src.pipeline_extraccion import ejecutar_pipeline
-# from src.analisis_financiero import ejecutar_analisis_ia
+from src.analisis_financiero import ejecutar_analisis_ia
 
 
 
@@ -81,12 +81,12 @@ def ejecutar_transformacion():
     logger.info("Ejecución completa de dbt finalizada exitosamente.")
 
 
-# def ejecutar_analisis_financiero(): # pragma: no cover
-#     """Integración con IA para el análisis financiero"""
-#     logger.info("=" * 60)
-#     logger.info("PASO 3: DETECCIÓN DE ANOMALÍAS CON IA")
-#     logger.info("=" * 60)
-#     ejecutar_analisis_ia()
+def ejecutar_analisis_financiero(): # pragma: no cover
+    """Integración con IA para el análisis financiero"""
+    logger.info("=" * 60)
+    logger.info("PASO 3: DETECCIÓN DE ANOMALÍAS CON IA")
+    logger.info("=" * 60)
+    ejecutar_analisis_ia()
 
 
 def main():
@@ -105,8 +105,8 @@ def main():
             ejecutar_extraccion()
         if args.step in ("transform", "all"):
             ejecutar_transformacion()
-        # if args.step in ("ia-analysis", "all"):
-        #     ejecutar_analisis_financiero()
+        if args.step in ("ia-analysis", "all"):
+            ejecutar_analisis_financiero()
     except Exception as e: # pylint: disable=broad-exception-caught
         logger.critical("El pipeline falló inesperadamente: %s", e, exc_info=False)
         sys.exit(1)

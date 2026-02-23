@@ -1,5 +1,6 @@
 version: 2
 
+
 models:
   - name: dim_clientes
     description: "Dimensión de clientes - contiene información única de cada cliente"
@@ -161,12 +162,6 @@ models:
         description: "Precio mensual en USD"
         tests:
           - not_null
-          - dbt_expectations.expect_column_values_to_be_of_type:
-              arguments:
-                column_type: real
-      - name: duration_days
-        description: "Duración de la suscripción en días"
-        tests:
           - dbt_expectations.expect_column_values_to_be_of_type:
               arguments:
                 column_type: real

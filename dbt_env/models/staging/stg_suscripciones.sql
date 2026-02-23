@@ -11,7 +11,6 @@ SELECT
         ELSE end_date
     END AS end_date,
     CAST(UPPER(TRIM(status)) AS TEXT) AS status,
-    CAST(monthly_price_usd AS REAL) AS monthly_price_usd,
-    CAST(ABS(julianday(end_date) - julianday(start_date)) AS REAL) AS duration_days
+    CAST(monthly_price_usd AS REAL) AS monthly_price_usd
 FROM {{ source('raw', 'raw_suscripciones') }}
 WHERE subscription_id IS NOT NULL

@@ -30,7 +30,7 @@ htmlcov/
 coverage.*
 
 # Logs
-logs/*.log
+logs/*
 
 # OS
 .DS_Store
