@@ -1,0 +1,207 @@
+version: 2
+
+models:
+  - name: dim_clientes
+    description: "Dimensión de clientes - contiene información única de cada cliente"
+    columns:
+      - name: customer_key
+        description: "Identificador único del cliente"
+        tests:
+          - unique
+          - not_null
+      - name: country
+        description: "País del cliente"
+        tests:
+          - not_null
+      - name: acquisition_channel
+        description: "Canal de adquisición del cliente"
+      - name: segment
+        description: "Segmento de cliente"
+      - name: registration_date_key
+        description: "Fecha de registro en formato YYYYMMDD"
+
+  - name: dim_empleados
+    description: "Dimensión de empleados - contiene información única de cada empleado"
+    columns:
+      - name: employee_key
+        description: "Identificador único del empleado"
+        tests:
+          - unique
+          - not_null
+      - name: area
+        description: "Área o departamento del empleado"
+      - name: salary_usd
+        description: "Salario del empleado en USD"
+        tests:
+          - not_null
+      - name: country
+        description: "País del empleado"
+      - name: hire_date_key
+        description: "Fecha de contratación en formato YYYYMMDD"
+
+  - name: dim_fecha
+    description: "Dimensión de fecha - contiene información temporal para análisis"
+    columns:
+      - name: date_day
+        description: "Fecha del día"
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        description: "Clave numérica de fecha en formato YYYYMMDD"
+        tests:
+          - unique
+          - not_null
+      - name: year
+        description: "Año de la fecha"
+      - name: month
+        description: "Mes de la fecha"
+      - name: day
+        description: "Día de la fecha"
+      - name: week_of_year
+        description: "Semana del año"
+      - name: is_weekend
+        description: "Indicador de si es fin de semana (0/1)"
+
+  - name: fact_gastos
+    description: "Tabla de hechos de gastos operativos"
+    columns:
+      - name: expense_key
+        description: "Identificador único del gasto"
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        description: "Clave de fecha en formato YYYYMMDD"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_fecha')
+              field: date_key
+      - name: provider
+        description: "Proveedor del gasto"
+      - name: category
+        description: "Categoría del gasto"
+        tests:
+          - not_null
+      - name: amount_usd
+        description: "Monto del gasto en USD"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: real
+      - name: country
+        description: "País donde se realizó el gasto"
+
+  - name: fact_pagos
+    description: "Tabla de hechos de pagos"
+    columns:
+      - name: payment_key
+        description: "Identificador único del pago"
+        tests:
+          - unique
+          - not_null
+      - name: transaction_key
+        description: "Referencia a la transacción asociada"
+      - name: payment_date_key
+        description: "Clave de fecha del pago en formato YYYYMMDD"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_fecha')
+              field: date_key
+      - name: payment_method
+        description: "Método de pago utilizado"
+        tests:
+          - not_null
+      - name: amount_usd
+        description: "Monto del pago en USD"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: real
+
+  - name: fact_suscripciones
+    description: "Tabla de hechos de suscripciones de clientes"
+    columns:
+      - name: subscription_key
+        description: "Identificador único de la suscripción"
+        tests:
+          - unique
+          - not_null
+      - name: customer_key
+        description: "Referencia al cliente"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_clientes')
+              field: customer_key
+      - name: start_date_key
+        description: "Clave de fecha de inicio en formato YYYYMMDD"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_fecha')
+              field: date_key
+      - name: plan
+        description: "Plan de suscripción"
+        tests:
+          - not_null
+      - name: status
+        description: "Estado de la suscripción"
+        tests:
+          - not_null
+      - name: monthly_price_usd
+        description: "Precio mensual en USD"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: real
+      - name: duration_days
+        description: "Duración de la suscripción en días"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: real
+
+  - name: fact_transacciones
+    description: "Tabla de hechos de transacciones de venta"
+    columns:
+      - name: transaction_key
+        description: "Identificador único de la transacción"
+        tests:
+          - unique
+          - not_null
+      - name: customer_key
+        description: "Referencia al cliente"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_clientes')
+              field: customer_key
+      - name: date_key
+        description: "Clave de fecha de la transacción en formato YYYYMMDD"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_fecha')
+              field: date_key
+      - name: country
+        description: "País de la transacción"
+        tests:
+          - not_null
+      - name: quantity
+        description: "Cantidad de unidades vendidas"
+        tests:
+          - not_null
+      - name: unit_price_usd
+        description: "Precio unitario en USD"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: real
+      - name: total_usd
+        description: "Monto total en USD"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: real

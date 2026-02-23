@@ -1,0 +1,33 @@
+# Entorno virtual
+venv/
+.venv/
+env/
+
+# Variables de entorno
+.env
+
+# Base de datos / Data cruda
+data/
+
+# dbt
+dbt_proyecto/target/
+dbt_proyecto/logs/
+dbt_proyecto/.user.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Logs
+logs/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/

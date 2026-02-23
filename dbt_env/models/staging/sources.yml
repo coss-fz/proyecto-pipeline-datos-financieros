@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    description: "Tablas crudas cargadas por el pipeline de extracción"
+    tables:
+      - name: raw_transacciones
+        description: "Transacciones de ventas normalizadas"
+        columns:
+          - name: transaction_id
+            tests: [unique, not_null]
+          - name: customer_id
+            tests: [not_null]
+          - name: total_usd
+            tests: [not_null]
+      - name: raw_pagos
+        description: "Pagos asociados a transacciones"
+        columns:
+          - name: payment_id
+            tests: [unique, not_null]
+      - name: raw_gastos
+        description: "Gastos operativos por categoría"
+        columns:
+          - name: expense_id
+            tests: [unique, not_null]
+      - name: raw_clientes
+        description: "Clientes registrados"
+        columns:
+          - name: customer_id
+            tests: [unique, not_null]
+      - name: raw_empleados
+        description: "Empleados activos"
+        columns:
+          - name: employee_id
+            tests: [unique, not_null]
+      - name: raw_suscripciones
+        description: "Suscripciones activas e inactivas"
+        columns:
+          - name: subscription_id
+            tests: [unique, not_null]
