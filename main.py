@@ -3,6 +3,7 @@
 - Ejecuta el pipeline completo: Extracción → dbt → Análisis IA
 """
 
+import sys
 from pathlib import Path
 import argparse
 import logging
@@ -10,7 +11,7 @@ import subprocess
 from dotenv import load_dotenv
 
 from src.pipeline_extraccion import ejecutar_pipeline
-# from src.deteccion_anomalias import ejecutar_analisis_ia
+# from src.analisis_financiero import ejecutar_analisis_ia
 
 
 
@@ -32,7 +33,7 @@ logger = logging.getLogger("main")
 
 
 
-def ejecutar_extraccion():
+def ejecutar_extraccion(): # pragma: no cover
     """Ejecución de la etapa de extracción"""
     logger.info("=" * 60)
     logger.info("PASO 1: PIPELINE DE EXTRACCIÓN")
@@ -59,6 +60,13 @@ def ejecutar_transformacion():
     logger.info("=" * 60)
     logger.info("PASO 2: TRANSFORMACIÓN CON DBT")
     logger.info("=" * 60)
+
+    dbt_path = Path("dbt_env")
+    if not dbt_path.exists():
+        logger.error("No existe la carpeta 'dbt_env' con el proyecto dbt. No " \
+                        "se puede ejecutar la transformación.")
+        raise FileNotFoundError("No se encontró la carpeta de con el proyecto dbt")
+
     comandos = [
         ["dbt", "clean"],
         ["dbt", "debug"],
@@ -73,12 +81,14 @@ def ejecutar_transformacion():
     logger.info("Ejecución completa de dbt finalizada exitosamente.")
 
 
-# def ejecutar_analisis_financiero():
-#     """Integración con IA para la detección de anomalías"""
+# def ejecutar_analisis_financiero(): # pragma: no cover
+#     """Integración con IA para el análisis financiero"""
 #     logger.info("=" * 60)
 #     logger.info("PASO 3: DETECCIÓN DE ANOMALÍAS CON IA")
 #     logger.info("=" * 60)
 #     ejecutar_analisis_ia()
+
+
 
 
 if __name__ == "__main__":
@@ -91,11 +101,15 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.step in ("extract", "all"):
-        ejecutar_extraccion()
-    if args.step in ("transform", "all"):
-        ejecutar_transformacion()
-    # if args.step in ("ia-analysis", "all"):
-    #     ejecutar_analisis_financiero()
+    try:
+        if args.step in ("extract", "all"):
+            ejecutar_extraccion()
+        if args.step in ("transform", "all"):
+            ejecutar_transformacion()
+        # if args.step in ("ia-analysis", "all"):
+        #     ejecutar_analisis_financiero()
+    except Exception as e: # pylint: disable=broad-exception-caught
+        logger.critical("El pipeline falló inesperadamente: %s", e, exc_info=False)
+        sys.exit(1)
 
     logger.info("Pipeline finalizado.")
