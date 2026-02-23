@@ -89,9 +89,8 @@ def ejecutar_transformacion():
 #     ejecutar_analisis_ia()
 
 
-
-
-if __name__ == "__main__":
+def main():
+    """Generar argumentos y ejecutar el pipeline completo"""
     parser = argparse.ArgumentParser(description="Financial Data Pipeline")
     parser.add_argument(
         "--step",
@@ -113,3 +112,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     logger.info("Pipeline finalizado.")
+
+
+
+
+if __name__ == "__main__":
+    main()

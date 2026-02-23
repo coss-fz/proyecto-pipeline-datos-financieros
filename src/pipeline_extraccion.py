@@ -74,7 +74,7 @@ def validar_datos(datos: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
         nulos = df.isnull().sum()
         nulos_existentes = nulos[nulos > 0]
         if not nulos_existentes.empty:
-            logger.warning("[%s] Nulos detectados:\n%d", nombre, nulos_existentes)
+            logger.warning("[%s] Nulos detectados:\n%d", nombre, len(nulos_existentes))
 
         filas_antes = len(df)
         df = df.drop_duplicates()
@@ -101,7 +101,7 @@ def validar_datos(datos: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
     return datos
 
 
-def cargar_datos(datos: dict[str, pd.DataFrame]) -> None: # ERROR HANDLING
+def cargar_datos(datos: dict[str, pd.DataFrame]) -> None:
     """Carga los DataFrames validados en SQLite como tablas de información cruda"""
     con = None
     tabla_map = {
