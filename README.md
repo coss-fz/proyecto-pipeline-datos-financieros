@@ -182,7 +182,7 @@ pytest
 - **Enriquecimiento:** Formato de códigos, fechas estandarizadas
 - **Pseudonimización:** IDs se convierten a integers/text seguros
 
-**Por qué separar?**
+**¿Por qué separar?**
 - Los datos staging son de vida corta (pueden regenerarse)
 - Aisla lógica analítica de lógica de negocio
 - Reutilizable por múltiples marts
